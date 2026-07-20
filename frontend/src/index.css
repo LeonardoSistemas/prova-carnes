@@ -1,0 +1,681 @@
+/* Fonte: Inter — sans-serif limpa, ótima legibilidade em tabelas/dados
+   densos (docs/Interface.txt). Carregada via Google Fonts (mais simples que
+   self-hosting para o escopo desta prova). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --text: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --bg: #fafafa;
+  --border: #e5e5e5;
+  --accent: #a63d2f;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  /* Border-radius pequeno e consistente (6-8px) reutilizado em toda a
+     aplicação — nunca misturar radius diferentes na mesma tela. */
+  --radius: 8px;
+  font: 16px/1.5 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===== RESPONSIVIDADE =====
+   Breakpoint único: 768px (tablet/mobile) — @media (max-width: 768px)
+
+   CSS puro não suporta variáveis em media queries, portanto o valor "768px"
+   será repetido literalmente em cada @media query, mas SEMPRE com este padrão:
+   @media (max-width: 768px) { ... }
+
+   Se precisar alterar o breakpoint no futuro, procure por "@media (max-width: 768px)"
+   e substitua todos os valores (via sed, find/replace do editor, etc.).
+
+   Referência visual: 768px = tela de tablet em portrait.
+   ===== FIM RESPONSIVIDADE ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Layout raiz: sidebar fina à esquerda + área de conteúdo (docs/Interface.txt,
+   seção "Layout"). Substitui a antiga barra superior (.navbar). */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* Hamburger button — visível apenas em mobile (<768px)
+   Renderiza como 3 spans empilhados verticalmente (≡ símbolo) */
+.sidebar-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  z-index: 101;
+}
+
+.sidebar-hamburger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: background 0.3s ease;
+}
+
+/* Overlay semitransparente sobre o conteúdo quando sidebar abre em mobile */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+/* Modificadores para mobile */
+@media (max-width: 768px) {
+  .sidebar-hamburger {
+    display: flex;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -220px;
+    width: 220px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    z-index: 100;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .sidebar--mobile-open {
+    left: 0;
+  }
+
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .app-content {
+    padding: 40px 16px;
+  }
+}
+
+.sidebar-brand {
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px;
+}
+
+.nav-link {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+}
+
+.nav-link.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Breadcrumb de navegação (docs/Implementar Hamburger Menu.txt, seção
+   desejável) — trilha simples "Seção > Ação atual" no topo das páginas de
+   listagem/formulário. Mesmo tom de texto secundário usado no restante da
+   UI (`--text-secondary`), sem competir visualmente com o `<h1>` abaixo. */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.breadcrumb-item a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-item a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.breadcrumb-item span[aria-current='page'] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.breadcrumb-separator {
+  padding: 0 4px;
+}
+
+/* Fade sutil de conteúdo ao trocar de rota (App.tsx remonta este wrapper via
+   `key={pathname}`, o que retrigger a animação a cada navegação). */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-fade {
+  animation: page-fade-in 0.25s ease;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.button-link {
+  display: inline-block;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button-link:hover {
+  background: #8f3527;
+}
+
+/* FAB (Floating Action Button) em mobile para "Novo pedido" */
+@media (max-width: 768px) {
+  .button-link {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 102;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Zebra striping sutil — regra genérica na tag `table`, reaproveitada pelas
+   três tabelas de dados (CarneTable/CompradorTable/PedidoTable) sem precisar
+   de uma classe própria em cada uma (docs/Interface.txt, seção "Tabelas de
+   dados": "linhas zebradas sutis, não cores fortes"). */
+tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* Coluna de valor monetário (ex.: `valorTotalEmReal` em PedidoTable) —
+   `tabular-nums` alinha os dígitos das cifras entre linhas da tabela. */
+.valor-monetario {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive table → card layout em mobile (<768px)
+   Usa data-label attribute para exibir rótulos em cada célula.
+   Aplicado nas três tabelas: CarneTable, CompradorTable, PedidoTable. */
+@media (max-width: 768px) {
+  table {
+    border: none;
+    margin: 12px 0;
+  }
+
+  table thead {
+    display: none;
+  }
+
+  table tbody tr {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    padding: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  table tbody tr:nth-child(even) {
+    background: #fff;
+  }
+
+  table tbody tr:hover {
+    background: var(--bg);
+    border-color: var(--text-secondary);
+  }
+
+  table tbody td {
+    display: block;
+    border: none;
+    padding: 12px;
+    text-align: left;
+    border-bottom: none;
+  }
+
+  /* Rótulo do data-label antes do valor */
+  table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  /* Célula de Ações: destaca no rodapé do card */
+  table tbody td[data-label="Ações"] {
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  table tbody td[data-label="Ações"]::before {
+    flex-basis: 100%;
+    margin-bottom: 8px;
+  }
+
+  table tbody td[data-label="Ações"] button,
+  table tbody td[data-label="Ações"] a {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 360px;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-field input,
+.form-field select {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+button {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 15px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+button:not(:disabled):hover {
+  background: var(--bg);
+  border-color: var(--text-secondary);
+}
+
+button[type='submit'] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+button[type='submit']:not(:disabled):hover {
+  background: #8f3527;
+  border-color: #8f3527;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button.danger {
+  background: #fff;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+button.danger:not(:disabled):hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.filtro-pedidos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.filtro-pedidos .form-field {
+  max-width: 220px;
+}
+
+.filtro-pedidos button {
+  height: 38px;
+}
+
+.filtro-pedidos .field-error {
+  flex-basis: 100%;
+}
+
+.pedido-item-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.itens-vazio {
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 16px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+
+.pedido-itens h2 {
+  font-size: 18px;
+}
+
+.api-error-banner {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+
+.api-error-banner p {
+  margin: 4px 0;
+}
+
+@keyframes modal-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: modal-overlay-fade-in 0.2s ease;
+}
+
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  animation: modal-fade-scale-in 0.2s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.periodo-seletor {
+  display: flex;
+  gap: 4px;
+  margin: 16px 0;
+}
+
+.periodo-botao--ativo {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Preserva a cor de destaque do período ativo durante o hover, sem ser
+   sobrescrita pelo hover genérico de `button` de menor especificidade. */
+.periodo-botao--ativo:not(:disabled):hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Cards de métrica do Dashboard — mesmo padrão visual de painel (borda fina
+   + --radius) já usado em `form`/`.filtro-pedidos`, sem introduzir sombra ou
+   radius novo. */
+.dashboard-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.dashboard-card {
+  flex: 1 1 220px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+/* EXCEÇÃO de breakpoint: Dashboard requer ponto de quebra adicional em 1024px
+   porque as 3 colunas fixas de cards não cabem bem em tablets (768-1024px).
+   Convenção geral do projeto é 768px (T72), mas este componente precisa de
+   um intermediate breakpoint para melhor distribuição visual. */
+@media (max-width: 1024px) {
+  .dashboard-card {
+    flex: 1 1 calc(50% - 8px);
+  }
+}
+
+.dashboard-card h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.dashboard-card-valor {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-card-secundario {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Rankings Top 5 (T66) — duas tabelas lado a lado no desktop, empilhadas em
+   telas estreitas (mesmo mecanismo de `flex-wrap` de `.dashboard-cards`). */
+.dashboard-top-lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.dashboard-top-list {
+  flex: 1 1 320px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+/* Em tablets (1024px), as listas Top 5 empilham verticalmente em vez de
+   lado a lado — mesmo breakpoint adicional de T82 dos cards. */
+@media (max-width: 1024px) {
+  .dashboard-top-lists {
+    flex-direction: column;
+  }
+
+  .dashboard-top-list {
+    flex: 1 1 auto;
+  }
+}
+
+.dashboard-top-list h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.dashboard-top-list table {
+  margin: 0;
+}
+
+/* Gráfico de faturamento por dia (T66) — mesmo painel com borda fina usado
+   nos cards/rankings acima, sem introduzir sombra ou radius novo. */
+.dashboard-chart {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.dashboard-chart h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.dashboard-chart-container {
+  width: 100%;
+  height: 280px;
+}
+
+@media (max-width: 768px) {
+  .filtro-pedidos {
+    flex-direction: column;
+  }
+
+  .filtro-pedidos .form-field {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Dashboard em mobile: cards em 1 coluna (continuando da quebra de 1024px) */
+  .dashboard-card {
+    flex: 1 1 100%;
+  }
+
+  /* Dashboard em mobile: mantém altura consistente do gráfico (280px).
+     ResponsiveContainer do Recharts já é responsivo em width e adapta-se bem
+     a diferentes tamanhos de viewport — a altura fixa não causa overflow
+     graças ao margin+padding do container pai. */
+}

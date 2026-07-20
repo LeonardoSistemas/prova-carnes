@@ -1,0 +1,39 @@
+/* Spinner animation — keyframes padrão para rotação contínua */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Botão com loading — container flexbox para spinner e texto lado a lado */
+.loading-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* Spinner — círculo com border que roda continuamente */
+.loading-button__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Texto do botão — oculto durante loading para que o spinner tenha espaço */
+.loading-button__text--hidden {
+  display: none;
+}
+
+/* Estado de loading — garante que texto fica oculto */
+.loading-button--loading .loading-button__text {
+  display: none;
+}

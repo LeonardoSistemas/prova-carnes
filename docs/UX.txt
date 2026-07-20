@@ -1,0 +1,197 @@
+inverter a ordem de consultar dólar e euro primeiro AwesomeAPI e depois BCB
+
+
+
+1. LAYOUT NÃO É RESPONSIVO EM MOBILE 🔴
+Problema: O conteúdo não se adapta ao tamanho da tela. Em dispositivos móveis (375px):
+
+A tabela mantém sua largura original de desktop
+Horizontal scrolling obrigatório em mobile
+Usuário precisa rolar horizontalmente para ver todas as colunas
+Sidebar fica visível mas não se colapsa
+
+Impacto: Experiência de usuário péssima em smartphones
+Recomendação: Implementar:
+
+Sidebar responsivo: Colapsar em hamburger menu em <768px
+Tabelas adaptáveis:
+
+Empilhar colunas verticalmente em mobile
+OU usar cards (view de grid em mobile)
+OU adicionar scroll horizontal com destaque visual
+
+
+Formulários: Estão Ok, mas poderiam ter margens ajustadas
+
+2. SIDEBAR SEMPRE VISÍVEL 🔴
+Problema: Em telas pequenas, o sidebar lateral ocupa muito espaço útil (aprox. 17% da tela mobile)
+Recomendação:
+- < 768px: Converter para hamburger menu com overlay
+- Menu colapsável com ícone de toggle
+- Manter espaço para conteúdo principal
+3. TABELAS NÃO ADAPTAM AO MOBILE 🔴
+Problema: As tabelas nas páginas de Carnes, Compradores e Pedidos têm muitas colunas
+Recomendação:
+Em Mobile (< 768px):
+- Mudar para card layout
+  Exemplo:
+  ┌─────────────────┐
+  │ ID: 1          │
+  │ Nome: Picanha  │
+  │ Origem: Bovina │
+  │ [Editar][X]    │
+  └─────────────────┘
+
+- OU coluna "Ações" em expandir/dropdown
+4. BOTÃO "NOVO PEDIDO" DESALINHADO 🟠
+Problema: Em desktop, "Novo pedido" aparece no canto superior direito, mas em mobile fica fora de lugar
+Recomendação:
+
+Posicionar em local mais acessível
+Considerar fixed button no mobile
+
+
+🎨 PROBLEMAS DE LAYOUT E UX
+5. FALTA DE FEEDBACK DE CARREGAMENTO
+Quando você clica em ações (edit, delete, cadastro), não há indicador visual que a ação está sendo processada
+Recomendação:
+
+Adicionar spinner/loader durante requisições
+Desabilitar botão durante carregamento
+Mostrar estado "loading"
+
+6. FORMULÁRIOS PODERIAM SER MELHORES 🟠
+Carnes - Cadastrar:
+✓ Campos claros
+✓ Dropdown funcional
+✗ Faltam validações visuais
+✗ Sem labels em-cima dos campos
+✗ Sem feedback de campos obrigatórios (*)
+✗ Sem auto-focus no primeiro campo
+Comprador - Cadastrar:
+✓ Campos bem estruturados
+✗ Sem mascaras (documento poderia ter máscara de CPF)
+✗ Sem validação de email
+✗ Sem placeholder descritivo
+Pedidos:
+✓ Data picker nativo (bom!)
+✗ Formato de data confuso: "dd/mm/aaaa" em input
+✗ Após clicar "Adicionar item", não há feedback visual
+✗ Seção "Itens do pedido" vazia pode confundir
+7. FILTROS EM PEDIDOS 🟠
+
+Em mobile, a linha de filtros fica muito comprimida
+Campos de data ficam muito pequenos
+Recomendação: Empilhar vertical em <768px
+
+8. LINKS VS BOTÕES
+
+Em Pedidos, os "Editar" são links (href) enquanto os "Excluir" são botões
+Inconsistência de padrão!
+Recomendação: Padronizar todos como botões ou links
+
+9. DASHBOARD 🟠
+
+Gráfico no final pode não aparecer completo em mobile
+Cards de 3 colunas quebram em tablet (768px)
+Tabelas "Top 5" lado a lado - ficam muito apertadas em tablet
+
+
+1. LAYOUT NÃO É RESPONSIVO EM MOBILE 🔴
+Problema: O conteúdo não se adapta ao tamanho da tela. Em dispositivos móveis (375px):
+
+A tabela mantém sua largura original de desktop
+Horizontal scrolling obrigatório em mobile
+Usuário precisa rolar horizontalmente para ver todas as colunas
+Sidebar fica visível mas não se colapsa
+
+Impacto: Experiência de usuário péssima em smartphones
+Recomendação: Implementar:
+
+Sidebar responsivo: Colapsar em hamburger menu em <768px
+Tabelas adaptáveis:
+
+Empilhar colunas verticalmente em mobile
+OU usar cards (view de grid em mobile)
+OU adicionar scroll horizontal com destaque visual
+
+
+Formulários: Estão Ok, mas poderiam ter margens ajustadas
+
+2. SIDEBAR SEMPRE VISÍVEL 🔴
+Problema: Em telas pequenas, o sidebar lateral ocupa muito espaço útil (aprox. 17% da tela mobile)
+Recomendação:
+- < 768px: Converter para hamburger menu com overlay
+- Menu colapsável com ícone de toggle
+- Manter espaço para conteúdo principal
+3. TABELAS NÃO ADAPTAM AO MOBILE 🔴
+Problema: As tabelas nas páginas de Carnes, Compradores e Pedidos têm muitas colunas
+Recomendação:
+Em Mobile (< 768px):
+- Mudar para card layout
+  Exemplo:
+  ┌─────────────────┐
+  │ ID: 1          │
+  │ Nome: Picanha  │
+  │ Origem: Bovina │
+  │ [Editar][X]    │
+  └─────────────────┘
+
+- OU coluna "Ações" em expandir/dropdown
+4. BOTÃO "NOVO PEDIDO" DESALINHADO 🟠
+Problema: Em desktop, "Novo pedido" aparece no canto superior direito, mas em mobile fica fora de lugar
+Recomendação:
+
+Posicionar em local mais acessível
+Considerar fixed button no mobile
+
+
+🎨 PROBLEMAS DE LAYOUT E UX
+5. FALTA DE FEEDBACK DE CARREGAMENTO
+Quando você clica em ações (edit, delete, cadastro), não há indicador visual que a ação está sendo processada
+Recomendação:
+
+Adicionar spinner/loader durante requisições
+Desabilitar botão durante carregamento
+Mostrar estado "loading"
+
+6. FORMULÁRIOS PODERIAM SER MELHORES 🟠
+Carnes - Cadastrar:
+✓ Campos claros
+✓ Dropdown funcional
+✗ Faltam validações visuais
+✗ Sem labels em-cima dos campos
+✗ Sem feedback de campos obrigatórios (*)
+✗ Sem auto-focus no primeiro campo
+Comprador - Cadastrar:
+✓ Campos bem estruturados
+✗ Sem mascaras (documento poderia ter máscara de CPF)
+✗ Sem validação de email
+✗ Sem placeholder descritivo
+Pedidos:
+✓ Data picker nativo (bom!)
+✗ Formato de data confuso: "dd/mm/aaaa" em input
+✗ Após clicar "Adicionar item", não há feedback visual
+✗ Seção "Itens do pedido" vazia pode confundir
+7. FILTROS EM PEDIDOS 🟠
+
+Em mobile, a linha de filtros fica muito comprimida
+Campos de data ficam muito pequenos
+Recomendação: Empilhar vertical em <768px
+
+8. LINKS VS BOTÕES
+
+Em Pedidos, os "Editar" são links (href) enquanto os "Excluir" são botões
+Inconsistência de padrão!
+Recomendação: Padronizar todos como botões ou links
+
+9. DASHBOARD 🟠
+
+Gráfico no final pode não aparecer completo em mobile
+Cards de 3 colunas quebram em tablet (768px)
+Tabelas "Top 5" lado a lado - ficam muito apertadas em tablet
+
+1. **Carnes** → Botão "Novo" no topo (como Pedidos)
+2. **Compradores** → Botão "Novo" no topo
+3. **Pedidos** → Manter como está ou melhorar com FAB em mobile
+4. **Remover tab "Cadastrar"** → Usar apenas o botão + modal/página
