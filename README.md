@@ -17,6 +17,67 @@ Banco Central).
 - **Frontend**: React + TypeScript + Vite, com TanStack Query para chamadas
   HTTP.
 
+### Camadas (backend)
+
+```mermaid
+flowchart LR
+    Client[Cliente HTTP] --> Controller
+    subgraph API["Prova.Api"]
+        Controller["Controller<br/>(DTOs, sem lógica de negócio)"]
+    end
+    subgraph SVC["Prova.Service"]
+        Service["Service<br/>(regras de negócio, validação)"]
+    end
+    subgraph DATA["Prova.Data"]
+        UoW["Repository / UnitOfWork"]
+    end
+    subgraph MODEL["Prova.Model"]
+        Entities["Entidades / Enums"]
+    end
+
+    Controller --> Service
+    Service --> UoW
+    UoW --> Entities
+    Service -.-> Entities
+```
+
+Cada seta é uma dependência de projeto na solution — `Model` não conhece
+nenhuma camada acima dele, e o `Controller` nunca acessa `Data`/`Model`
+diretamente (sempre via `Service`, que aplica as regras de negócio e
+devolve/recebe DTOs).
+
+### Fluxo de cotação de câmbio (fallback)
+
+```mermaid
+sequenceDiagram
+    participant P as PedidoService
+    participant F as CotacaoServiceComFallback
+    participant A as AwesomeApiCotacaoService
+    participant B as BcbCotacaoService
+
+    P->>F: ObterCotacoesAsync(moedas)
+    F->>A: ObterCotacoesAsync(moedas)
+    alt AwesomeAPI responde
+        A-->>F: cotações
+    else AwesomeAPI falha (CotacaoIndisponivelException)
+        A-->>F: erro
+        F->>B: ObterCotacoesAsync(moedas)
+        Note over B: tenta último dia útil<br/>(janela de até 7 dias)
+        alt BCB responde
+            B-->>F: cotações
+        else BCB também falha
+            B-->>F: erro
+            F-->>P: CotacaoIndisponivelException
+            Note over P: pedido não é criado — API retorna 422
+        end
+    end
+    F-->>P: cotações
+```
+
+`CotacaoServiceComFallback` é um decorator de `ICotacaoService`: a AwesomeAPI
+é a fonte primária, o Banco Central (PTAX/Olinda) só é chamado se ela falhar.
+Ver "Decisões assumidas" abaixo para o histórico dessa escolha.
+
 ## Funcionalidades
 
 - **CRUD de Carne, Comprador e Pedido**, com bloqueio de exclusão de Carne e
